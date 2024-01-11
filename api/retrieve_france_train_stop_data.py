@@ -29,7 +29,7 @@ with open(SECRET_TOKEN_PATH) as f:
 ########################################
 
 res = requests.get(
-    "https://@api.navitia.io/v1/coverage/fr-idf/stop_points",
+    "https://api.sncf.com/v1/coverage/fr-idf/stop_points",
     auth=(SECRET_TOKEN, ""),
     params={"count": 1},
 )

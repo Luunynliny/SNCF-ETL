@@ -8,7 +8,7 @@ import requests
 ###############
 
 SECRET_TOKEN_PATH = path.join(
-    path.dirname(path.abspath(__file__)), "../../../SECRET_TOKEN.txt"
+    path.dirname(path.abspath(__file__)), "./SECRET_TOKEN.txt"
 )
 
 STOP_POINTS_DATA_PATH = path.join(

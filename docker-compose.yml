@@ -1,4 +1,8 @@
 version: '3'
 services:
-  api:
-    build: api
+  # api:
+  #   build: api
+  db:
+    build: db
+    ports:
+      - "9000:27017"

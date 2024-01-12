@@ -1,8 +1,15 @@
 version: '3'
+
 services:
-  # api:
-  #   build: api
   db:
-    build: db
+    container_name: db
+    build:
+      context: db
     ports:
-      - "9000:27017"
+      - "27017:27017"
+  api:
+    container_name: api
+    depends_on:
+      - db
+    build:
+      context: api

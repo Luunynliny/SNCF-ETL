@@ -73,6 +73,7 @@ for page_count in range(0, TOTAL_PAGE_COUNT + 1):
                 "id": stop_point["id"],
                 "name": stop_point["name"],
                 "label": stop_point["label"],
-                "coord": stop_point["coord"],
+                "lat": stop_point["coord"]["lat"],
+                "lon": stop_point["coord"]["lon"],
             }
         )

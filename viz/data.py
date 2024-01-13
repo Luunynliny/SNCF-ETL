@@ -21,7 +21,7 @@ db = client[DB_NAME]
 # Retrieve stop points data #
 #############################
 
-cursor = db["stop_points"].find()
+cursor = db["stop_points"].find({})
 
 stop_points_df = pd.DataFrame(list(cursor))
 

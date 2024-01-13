@@ -77,6 +77,5 @@ for page_count in range(0, TOTAL_PAGE_COUNT + 1):
                 "lon": stop_point["coord"]["lon"],
             }
         )
-        break
 
     break

@@ -1,5 +1,5 @@
-import pandas as pd
 from dash import Dash, dcc, html
+from data import stop_points_df
 from plotly import express as px
 
 #########
@@ -31,21 +31,15 @@ px.set_mapbox_access_token(MAPBOX_TOKEN)
 # Map of train stops #
 ######################
 
-cities_df = pd.DataFrame(
-    [
-        {"name": "Paris", "lat": 48.864716, "lon": 2.349014},
-        {"name": "Lyon", "lat": 45.763420, "lon": 4.834277},
-    ]
-)
-
 FRANCE_CENTER = {"lat": 46.71109, "lon": 1.7191036}
 ZOOM_LEVEL = 4
 
 fig = px.scatter_mapbox(
-    cities_df,
+    stop_points_df,
     lat="lat",
     lon="lon",
-    hover_name="name",
+    hover_name="label",
+    hover_data="id",
     zoom=ZOOM_LEVEL,
     center=FRANCE_CENTER,
 )

@@ -67,7 +67,7 @@ for page_count in range(0, TOTAL_PAGE_COUNT + 1):
 
     data = res.json()
 
-    for stop_point in data.get("stop_points"):
+    for stop_point in data["stop_points"]:
         stop_point_collection.insert_one(
             {
                 "id": stop_point["id"],
@@ -77,3 +77,6 @@ for page_count in range(0, TOTAL_PAGE_COUNT + 1):
                 "lon": stop_point["coord"]["lon"],
             }
         )
+        break
+
+    break

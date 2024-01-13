@@ -1,22 +1,30 @@
 version: '3'
 
 services:
-  # db:
-  #   container_name: db
-  #   build:
-  #     context: db
-  #   ports:
-  #     - "27017:27017"
-  # api:
-  #   container_name: api
-  #   depends_on:
-  #     - db
-  #   build:
-  #     context: api
+  db:
+    container_name: db
+    build:
+      context: db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+  api:
+    container_name: api
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: api
   viz:
     container_name: viz
-    # depends_on:
-    #   - api
+    depends_on:
+      api:
+        condition: service_completed_successfully
     build:
       context: viz
     ports:

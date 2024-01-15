@@ -5,7 +5,7 @@ from pymongo import MongoClient
 # Database configuration #
 ##########################
 
-DB_HOST = "db"
+DB_HOST = "localhost"  # "db"
 DB_PORT = 27017
 DB_NAME = "sncf"
 

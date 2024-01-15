@@ -1,4 +1,3 @@
-from dash import Dash, dcc, html
 from data import stop_points_df
 from plotly import express as px
 
@@ -15,26 +14,16 @@ MAPBOX_TOKEN_PATH = "./MAPBOX_TOKEN.txt"
 with open(MAPBOX_TOKEN_PATH) as f:
     MAPBOX_TOKEN = f.read()
 
-############################
-# Initialize visualization #
-############################
-
-viz = Dash(__name__)
-
-####################
-# Set Mapbox token #
-####################
-
 px.set_mapbox_access_token(MAPBOX_TOKEN)
 
-######################
-# Map of train stops #
-######################
+########
+# Maps #
+########
 
 FRANCE_CENTER = {"lat": 46.71109, "lon": 1.7191036}
 ZOOM_LEVEL = 4
 
-fig = px.scatter_mapbox(
+train_stop_scatter_map = px.scatter_mapbox(
     stop_points_df,
     lat="lat",
     lon="lon",
@@ -44,8 +33,15 @@ fig = px.scatter_mapbox(
     center=FRANCE_CENTER,
 )
 
-##########
-# Layout #
-##########
+train_stop_density_map = px.density_mapbox(
+    stop_points_df,
+    lat="lat",
+    lon="lon",
+    hover_name="label",
+    hover_data="id",
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+    radius=10,
+)
 
-viz.layout = html.Div([dcc.Graph(figure=fig)])
+train_stop_density_map.update_coloraxes(showscale=False)

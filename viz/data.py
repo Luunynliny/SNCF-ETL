@@ -5,7 +5,7 @@ from pymongo import MongoClient
 # Database configuration #
 ##########################
 
-DB_HOST = "localhost"  # "db"
+DB_HOST = "db"
 DB_PORT = 27017
 DB_NAME = "sncf"
 
@@ -17,13 +17,13 @@ client = MongoClient(host=DB_HOST, port=DB_PORT)
 
 db = client[DB_NAME]
 
-#############################
-# Retrieve stop points data #
-#############################
+################################
+# Retrieve train stations data #
+################################
 
-cursor = db["stop_points"].find({})
+cursor = db["train_stations"].find({})
 
-stop_points_df = pd.DataFrame(list(cursor))
+train_stations_df = pd.DataFrame(list(cursor))
 
 ####################
 # Close connection #

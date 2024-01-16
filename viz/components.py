@@ -1,4 +1,4 @@
-from data import stop_points_df
+from data import train_stations_df
 from plotly import express as px
 
 #########
@@ -23,25 +23,25 @@ px.set_mapbox_access_token(MAPBOX_TOKEN)
 FRANCE_CENTER = {"lat": 46.71109, "lon": 1.7191036}
 ZOOM_LEVEL = 4
 
-train_stop_scatter_map = px.scatter_mapbox(
-    stop_points_df,
+train_stations_scatter_map = px.scatter_mapbox(
+    train_stations_df,
     lat="lat",
     lon="lon",
-    hover_name="label",
-    hover_data="id",
+    hover_name="libelle",
+    hover_data=["code_uic", "code_ligne"],
     zoom=ZOOM_LEVEL,
     center=FRANCE_CENTER,
 )
 
-train_stop_density_map = px.density_mapbox(
-    stop_points_df,
+train_stations_density_map = px.density_mapbox(
+    train_stations_df,
     lat="lat",
     lon="lon",
-    hover_name="label",
-    hover_data="id",
+    hover_name="libelle",
+    hover_data=["code_uic", "code_ligne"],
     zoom=ZOOM_LEVEL,
     center=FRANCE_CENTER,
     radius=10,
 )
 
-train_stop_density_map.update_coloraxes(showscale=False)
+train_stations_density_map.update_coloraxes(showscale=False)

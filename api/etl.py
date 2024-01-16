@@ -1,40 +1,21 @@
 import requests
 from pymongo import MongoClient
 
-#########
-# PATHS #
-#########
-
-API_SECRET_TOKEN_PATH = "./SECRET_TOKEN.txt"
-
 #####################
 # API configuration #
 #####################
 
-API_BASE_URL = "https://api.sncf.com/v1/"
-API_REQUEST_ITEM_LIMIT = 1000
+API_BASE_URL = "https://ressources.data.sncf.com/api/explore/v2.1"
 
-#############################
-# Retrieve API secret token #
-#############################
-
-with open(API_SECRET_TOKEN_PATH) as f:
-    API_SECRET_TOKEN = f.read()
-
-########################################
-# Retrieve total number of stop points #
-########################################
+###########################
+# Retrieve train stations #
+###########################
 
 res = requests.get(
-    f"{API_BASE_URL}/coverage/fr-idf/stop_points",
-    auth=(API_SECRET_TOKEN, ""),
-    params={"count": 1},
+    f"{API_BASE_URL}/catalog/datasets/liste-des-gares/exports/json"
 )
 
 data = res.json()
-
-TOTAL_RESULTS = data["pagination"]["total_result"]
-TOTAL_PAGE_COUNT = TOTAL_RESULTS // API_REQUEST_ITEM_LIMIT
 
 ##########################
 # Database configuration #
@@ -52,30 +33,25 @@ client = MongoClient(host=DB_HOST, port=DB_PORT)
 
 db = client[DB_NAME]
 
-###########################
-# Retrieve and store data #
-###########################
+##############
+# Store data #
+##############
 
-stop_point_collection = db["stop_points"]
+train_station_collection = db["train_stations"]
 
-for page_count in range(0, TOTAL_PAGE_COUNT + 1):
-    res = requests.get(
-        f"{API_BASE_URL}/coverage/fr-idf/stop_points",
-        auth=(API_SECRET_TOKEN, ""),
-        params={"count": API_REQUEST_ITEM_LIMIT, "start_page": page_count},
+for train_station in data:
+    train_station_collection.insert_one(
+        {
+            "code_uic": train_station["code_uic"],
+            "libelle": train_station["libelle"],
+            "code_ligne": train_station["code_ligne"],
+            "lat": train_station["geo_point_2d"]["lat"],
+            "lon": train_station["geo_point_2d"]["lon"],
+        }
     )
 
-    data = res.json()
+####################
+# Close connection #
+####################
 
-    for stop_point in data["stop_points"]:
-        stop_point_collection.insert_one(
-            {
-                "id": stop_point["id"],
-                "name": stop_point["name"],
-                "label": stop_point["label"],
-                "lat": stop_point["coord"]["lat"],
-                "lon": stop_point["coord"]["lon"],
-            }
-        )
-
-    break
+client.close()

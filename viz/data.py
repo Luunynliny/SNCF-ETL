@@ -1,5 +1,6 @@
 import pandas as pd
 from pymongo import MongoClient
+from shapely.geometry import LineString
 
 ##########################
 # Database configuration #
@@ -29,6 +30,13 @@ train_stations_df = pd.DataFrame(list(cursor))
 # Retrieve network data #
 #########################
 
+
+def simplify_line(coords, tolerance=0.01):
+    return (
+        LineString(coords).simplify(tolerance, preserve_topology=False).coords
+    )
+
+
 cursor = db["network"].find({})
 
 lats, lons, codes, names, types = [], [], [], [], []
@@ -38,7 +46,7 @@ for row in list(cursor):
 
     match geom["type"]:
         case "LineString":
-            for lon, lat in (coords := geom["coordinates"]):
+            for lon, lat in (coords := simplify_line(geom["coordinates"])):
                 lats.append(lat)
                 lons.append(lon)
 
@@ -46,8 +54,8 @@ for row in list(cursor):
         case "MultiLineString":
             coords_cnt = 0
 
-            for coords in geom["coordinates"]:
-                for lon, lat in coords:
+            for line in geom["coordinates"]:
+                for lon, lat in (coords := simplify_line(line)):
                     lats.append(lat)
                     lons.append(lon)
 

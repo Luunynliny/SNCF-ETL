@@ -55,7 +55,7 @@ train_stations_density_map.update_coloraxes(showscale=False)
 ###########
 
 network_line = px.line_mapbox(
-    network_df,
+    network_df[network_df["type"] == "Ligne proprement dite"],
     lat="lat",
     lon="lon",
     hover_name="name",

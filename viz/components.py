@@ -1,4 +1,4 @@
-from data import train_stations_df
+from data import network_df, train_stations_df
 from plotly import express as px
 
 #########
@@ -23,6 +23,10 @@ px.set_mapbox_access_token(MAPBOX_TOKEN)
 FRANCE_CENTER = {"lat": 46.71109, "lon": 1.7191036}
 ZOOM_LEVEL = 4
 
+##################
+# Train stations #
+##################
+
 train_stations_scatter_map = px.scatter_mapbox(
     train_stations_df,
     lat="lat",
@@ -45,3 +49,20 @@ train_stations_density_map = px.density_mapbox(
 )
 
 train_stations_density_map.update_coloraxes(showscale=False)
+
+###########
+# Network #
+###########
+
+network_line = px.line_mapbox(
+    network_df,
+    lat="lat",
+    lon="lon",
+    hover_name="name",
+    hover_data=["code"],
+    color="code",
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+)
+
+network_line.update_layout(showlegend=False)

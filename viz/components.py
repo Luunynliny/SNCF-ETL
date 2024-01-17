@@ -54,7 +54,7 @@ train_stations_density_map.update_coloraxes(showscale=False)
 # Network #
 ###########
 
-network_line = px.line_mapbox(
+network_domestic = px.line_mapbox(
     network_df[network_df["type"] == "Ligne proprement dite"],
     lat="lat",
     lon="lon",
@@ -65,4 +65,30 @@ network_line = px.line_mapbox(
     center=FRANCE_CENTER,
 )
 
-network_line.update_layout(showlegend=False)
+network_railroad = px.line_mapbox(
+    network_df[
+        network_df["type"] == "Voie de desserte de voies ferrées de port"
+    ],
+    lat="lat",
+    lon="lon",
+    hover_name="name",
+    hover_data=["code"],
+    color="code",
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+)
+
+network_connection = px.line_mapbox(
+    network_df[network_df["type"] == "Raccordement"],
+    lat="lat",
+    lon="lon",
+    hover_name="name",
+    hover_data=["code"],
+    color="code",
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+)
+
+network_domestic.update_layout(showlegend=False)
+network_railroad.update_layout(showlegend=False)
+network_connection.update_layout(showlegend=False)

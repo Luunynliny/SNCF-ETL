@@ -1,4 +1,5 @@
-from data import network_df
+from data import network_df, train_stations_df
+from network_type import NetworkType
 from plotly import express as px
 
 #########
@@ -27,35 +28,35 @@ ZOOM_LEVEL = 4
 # Train stations #
 ##################
 
-# train_stations_scatter_map = px.scatter_mapbox(
-#     train_stations_df,
-#     lat="lat",
-#     lon="lon",
-#     hover_name="libelle",
-#     hover_data=["code_uic", "code_ligne"],
-#     zoom=ZOOM_LEVEL,
-#     center=FRANCE_CENTER,
-# )
+train_stations_scatter_map = px.scatter_mapbox(
+    train_stations_df,
+    lat="lat",
+    lon="lon",
+    hover_name="libelle",
+    hover_data=["code_uic", "code_ligne"],
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+)
 
-# train_stations_density_map = px.density_mapbox(
-#     train_stations_df,
-#     lat="lat",
-#     lon="lon",
-#     hover_name="libelle",
-#     hover_data=["code_uic", "code_ligne"],
-#     zoom=ZOOM_LEVEL,
-#     center=FRANCE_CENTER,
-#     radius=10,
-# )
+train_stations_density_map = px.density_mapbox(
+    train_stations_df,
+    lat="lat",
+    lon="lon",
+    hover_name="libelle",
+    hover_data=["code_uic", "code_ligne"],
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+    radius=10,
+)
 
-# train_stations_density_map.update_coloraxes(showscale=False)
+train_stations_density_map.update_coloraxes(showscale=False)
 
 ###########
 # Network #
 ###########
 
-network_domestic = px.line_mapbox(
-    network_df[network_df["type"] == "Ligne proprement dite"],
+network_A = px.line_mapbox(
+    network_df[network_df["type"] == NetworkType.A.value],
     lat="lat",
     lon="lon",
     hover_name="name",
@@ -66,10 +67,8 @@ network_domestic = px.line_mapbox(
     center=FRANCE_CENTER,
 )
 
-network_railroad = px.line_mapbox(
-    network_df[
-        network_df["type"] == "Voie de desserte de voies ferrées de port"
-    ],
+network_B = px.line_mapbox(
+    network_df[network_df["type"] == NetworkType.B.value],
     lat="lat",
     lon="lon",
     hover_name="name",
@@ -79,8 +78,8 @@ network_railroad = px.line_mapbox(
     center=FRANCE_CENTER,
 )
 
-network_connection = px.line_mapbox(
-    network_df[network_df["type"] == "Raccordement"],
+network_C = px.line_mapbox(
+    network_df[network_df["type"] == NetworkType.C.value],
     lat="lat",
     lon="lon",
     hover_name="name",
@@ -90,6 +89,18 @@ network_connection = px.line_mapbox(
     center=FRANCE_CENTER,
 )
 
-network_domestic.update_layout(showlegend=False)
-network_railroad.update_layout(showlegend=False)
-network_connection.update_layout(showlegend=False)
+network_D = px.line_mapbox(
+    network_df[network_df["type"] == NetworkType.D.value],
+    lat="lat",
+    lon="lon",
+    hover_name="name",
+    hover_data=["code"],
+    color="code",
+    zoom=ZOOM_LEVEL,
+    center=FRANCE_CENTER,
+)
+
+network_A.update_layout(showlegend=False)
+network_B.update_layout(showlegend=False)
+network_C.update_layout(showlegend=False)
+network_D.update_layout(showlegend=False)

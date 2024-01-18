@@ -21,97 +21,74 @@ px.set_mapbox_access_token(MAPBOX_TOKEN)
 # Maps #
 ########
 
-WIDTH, HEIGHT = 2000, 2000
-
 FRANCE_CENTER = {"lat": 46.71109, "lon": 1.7191036}
-ZOOM_LEVEL = 4
+ZOOM_LEVEL = 5
+
+OPACITY = 0.5
+
+MAP_BASE_CONFIG = {
+    "lat": "lat",
+    "lon": "lon",
+    "hover_name": "libelle",
+    "hover_data": ["code_uic", "code_ligne"],
+    "zoom": ZOOM_LEVEL,
+    "center": FRANCE_CENTER,
+    "opacity": OPACITY,
+}
+
+LINE_BASE_CONFIG = {
+    "lat": "lat",
+    "lon": "lon",
+    "hover_name": "name",
+    "hover_data": ["code"],
+    "color": "code",
+    "line_group": "id",
+    "zoom": ZOOM_LEVEL,
+    "center": FRANCE_CENTER,
+}
+
+LAYOUT_BASE_CONFIG = {"margin": {"l": 0, "b": 0, "r": 0, "t": 0}}
 
 ##################
 # Train stations #
 ##################
 
 train_stations_scatter_map = px.scatter_mapbox(
-    train_stations_df,
-    lat="lat",
-    lon="lon",
-    hover_name="libelle",
-    hover_data=["code_uic", "code_ligne"],
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
-    mapbox_style="carto-positron",
-    # width=WIDTH,
-    # height=HEIGHT,
+    train_stations_df, **MAP_BASE_CONFIG
 )
 
 train_stations_density_map = px.density_mapbox(
     train_stations_df,
-    lat="lat",
-    lon="lon",
-    hover_name="libelle",
-    hover_data=["code_uic", "code_ligne"],
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
+    **MAP_BASE_CONFIG,
     radius=10,
-    mapbox_style="carto-positron",
-    # width=WIDTH,
-    # height=HEIGHT,
 )
 
+train_stations_scatter_map.update_layout(**LAYOUT_BASE_CONFIG)
+train_stations_density_map.update_layout(**LAYOUT_BASE_CONFIG)
+
 train_stations_density_map.update_coloraxes(showscale=False)
-train_stations_density_map.update_layout(
-    margin={"l": 0, "b": 0, "r": 0, "t": 0}
-)
 
 ###########
 # Network #
 ###########
 
 network_A = px.line_mapbox(
-    network_df[network_df["type"] == NetworkType.A.value],
-    lat="lat",
-    lon="lon",
-    hover_name="name",
-    hover_data=["code"],
-    color="code",
-    line_group="id",
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
+    network_df[network_df["type"] == NetworkType.A.value], **LINE_BASE_CONFIG
 )
 
 network_B = px.line_mapbox(
-    network_df[network_df["type"] == NetworkType.B.value],
-    lat="lat",
-    lon="lon",
-    hover_name="name",
-    hover_data=["code"],
-    color="code",
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
+    network_df[network_df["type"] == NetworkType.B.value], **LINE_BASE_CONFIG
 )
 
 network_C = px.line_mapbox(
-    network_df[network_df["type"] == NetworkType.C.value],
-    lat="lat",
-    lon="lon",
-    hover_name="name",
-    hover_data=["code"],
-    color="code",
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
+    network_df[network_df["type"] == NetworkType.C.value], **LINE_BASE_CONFIG
 )
 
 network_D = px.line_mapbox(
-    network_df[network_df["type"] == NetworkType.D.value],
-    lat="lat",
-    lon="lon",
-    hover_name="name",
-    hover_data=["code"],
-    color="code",
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
+    network_df[network_df["type"] == NetworkType.D.value], **LINE_BASE_CONFIG
 )
 
-network_A.update_layout(showlegend=False)
-network_B.update_layout(showlegend=False)
-network_C.update_layout(showlegend=False)
-network_D.update_layout(showlegend=False)
+network_A.update_layout(**LAYOUT_BASE_CONFIG, showlegend=False)
+network_B.update_layout(**LAYOUT_BASE_CONFIG, showlegend=False)
+network_C.update_layout(**LAYOUT_BASE_CONFIG, showlegend=False)
+network_D.update_layout(**LAYOUT_BASE_CONFIG, showlegend=False)

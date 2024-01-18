@@ -14,15 +14,27 @@ from viz import viz
 
 viz.layout = html.Div(
     [
-        # daq.ToggleSwitch(
-        #     id="switch_station_map",
-        #     label=["Locations", "Density"],
-        #     value=False,
-        # ),
+        dcc.Dropdown(
+            id="dropdown",
+            options=[
+                {"label": "Scatter Mapbox", "value": "scatter_map"},
+                {"label": "Density Mapbox", "value": "density_map"},
+            ],
+            clearable=False,
+            searchable=False,
+            value="scatter_map",
+            style={
+                "position": "absolute",
+                "width": "300px",
+                "left": "10px",
+                "top": "10px",
+                "zIndex": 1,
+            },
+        ),
         dcc.Graph(
             id="train_stations_map",
-            figure=train_stations_density_map,
-            style={"width": "100vw", "height": "100vh"},
+            figure=train_stations_scatter_map,
+            style={"width": "100vw", "height": "100vh", "zIndex": 0},
         )
         # dcc.RadioItems(
         #     id="radio_network_map",
@@ -32,8 +44,7 @@ viz.layout = html.Div(
         #     value=NetworkType.A.name,
         # ),
         # dcc.Graph(id="network_map", figure=network_A),
-    ],
-    style={"margin": "0"},
+    ]
 )
 
 #############
@@ -41,28 +52,28 @@ viz.layout = html.Div(
 #############
 
 
-# @callback(
-#     Output("train_stations_map", "figure"),
-#     [
-#         Input("switch_station_map", "value"),
-#         Input("train_stations_map", "relayoutData"),
-#     ],
-# )
-# def switch_station_map(is_density_selected, relayout_data):
-#     fig = (
-#         train_stations_density_map
-#         if is_density_selected
-#         else train_stations_scatter_map
-#     )
+@callback(
+    Output("train_stations_map", "figure"),
+    [
+        Input("dropdown", "value"),
+        Input("train_stations_map", "relayoutData"),
+    ],
+)
+def dropdown(selected, relayout_data):
+    match selected:
+        case "scatter_map":
+            fig = train_stations_scatter_map
+        case "density_map":
+            fig = train_stations_density_map
 
-#     if relayout_data:
-#         prev_zoom = relayout_data.get("mapbox.zoom", 10)
-#         prev_center = relayout_data.get("mapbox.center", {"lat": 0, "lon": 0})
+    if relayout_data:
+        prev_zoom = relayout_data.get("mapbox.zoom", 10)
+        prev_center = relayout_data.get("mapbox.center", {"lat": 0, "lon": 0})
 
-#         fig["layout"]["mapbox"]["zoom"] = prev_zoom
-#         fig["layout"]["mapbox"]["center"] = prev_center
+        fig["layout"]["mapbox"]["zoom"] = prev_zoom
+        fig["layout"]["mapbox"]["center"] = prev_center
 
-#     return fig
+    return fig
 
 
 # @callback(

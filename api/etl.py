@@ -67,6 +67,7 @@ for network_line in data_network:
         {
             "code_ligne": network_line["code_ligne"],
             "lib_ligne": network_line["lib_ligne"],
+            "rg_troncon": network_line["rg_troncon"],
             "type_ligne": network_line["type_ligne"],
             "geo_shape": network_line["geo_shape"],
         }

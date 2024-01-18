@@ -1,4 +1,4 @@
-from data import network_df, train_stations_df
+from data import network_df
 from plotly import express as px
 
 #########
@@ -27,28 +27,28 @@ ZOOM_LEVEL = 4
 # Train stations #
 ##################
 
-train_stations_scatter_map = px.scatter_mapbox(
-    train_stations_df,
-    lat="lat",
-    lon="lon",
-    hover_name="libelle",
-    hover_data=["code_uic", "code_ligne"],
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
-)
+# train_stations_scatter_map = px.scatter_mapbox(
+#     train_stations_df,
+#     lat="lat",
+#     lon="lon",
+#     hover_name="libelle",
+#     hover_data=["code_uic", "code_ligne"],
+#     zoom=ZOOM_LEVEL,
+#     center=FRANCE_CENTER,
+# )
 
-train_stations_density_map = px.density_mapbox(
-    train_stations_df,
-    lat="lat",
-    lon="lon",
-    hover_name="libelle",
-    hover_data=["code_uic", "code_ligne"],
-    zoom=ZOOM_LEVEL,
-    center=FRANCE_CENTER,
-    radius=10,
-)
+# train_stations_density_map = px.density_mapbox(
+#     train_stations_df,
+#     lat="lat",
+#     lon="lon",
+#     hover_name="libelle",
+#     hover_data=["code_uic", "code_ligne"],
+#     zoom=ZOOM_LEVEL,
+#     center=FRANCE_CENTER,
+#     radius=10,
+# )
 
-train_stations_density_map.update_coloraxes(showscale=False)
+# train_stations_density_map.update_coloraxes(showscale=False)
 
 ###########
 # Network #
@@ -61,6 +61,7 @@ network_domestic = px.line_mapbox(
     hover_name="name",
     hover_data=["code"],
     color="code",
+    line_group="id",
     zoom=ZOOM_LEVEL,
     center=FRANCE_CENTER,
 )

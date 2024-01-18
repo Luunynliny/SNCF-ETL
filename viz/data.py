@@ -37,9 +37,9 @@ def simplify_line(coords, tolerance=0.01):
     )
 
 
-cursor = db["network"].find({})
+cursor = db['network'].find({})
 
-lats, lons, codes, names, types = [], [], [], [], []
+ids, lats, lons, codes, names, types = [], [], [], [], [], []
 
 for row in list(cursor):
     geom = row["geo_shape"]["geometry"]
@@ -51,15 +51,22 @@ for row in list(cursor):
                 lons.append(lon)
 
             coords_cnt = len(coords)
+
+            _id = f"{row["code_ligne"]}_{row["rg_troncon"]}"
+            ids.extend([_id] * coords_cnt)
         case "MultiLineString":
             coords_cnt = 0
 
-            for line in geom["coordinates"]:
+            for i, line in enumerate(geom["coordinates"]):
                 for lon, lat in (coords := simplify_line(line)):
                     lats.append(lat)
                     lons.append(lon)
 
-                coords_cnt += len(coords)
+                coords_nb = len(coords)
+                coords_cnt += coords_nb
+
+                _id = f"{row["code_ligne"]}_{row["rg_troncon"]}_{i + 1}"
+                ids.extend([_id] * coords_nb)
 
     codes.extend([row["code_ligne"]] * coords_cnt)
     names.extend([row["lib_ligne"]] * coords_cnt)
@@ -67,6 +74,7 @@ for row in list(cursor):
 
 network_df = pd.DataFrame(
     {
+        "id": ids,
         "lat": lats,
         "lon": lons,
         "code": codes,

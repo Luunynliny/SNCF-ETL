@@ -41,11 +41,16 @@ Prior to installing the project, you need to download and setup Git and Docker, 
 ### Installation
 
 1. Clone the repository
-2. Run Docker compose
+2. Create a [Mapbox API token](https://docs.mapbox.com/api/accounts/tokens/)
+3. Store the token within the ```viz``` directory
+```bash
+echo "token" > viz/MAPBOX_TOKEN.txt
+```
+4. Run Docker compose
 ```bash
 docker compose up
 ```
-3. Go to http://0.0.0.0:8050/
+5. Go to http://0.0.0.0:8050/
 
 <p align="right"><a href="#top"><i>back to top</i></a></p>
 

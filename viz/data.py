@@ -6,7 +6,7 @@ from shapely.geometry import LineString
 # Database configuration #
 ##########################
 
-DB_HOST = "localhost"  # "db"
+DB_HOST = "db"
 DB_PORT = 27017
 DB_NAME = "sncf"
 

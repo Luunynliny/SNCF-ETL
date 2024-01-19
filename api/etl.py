@@ -15,7 +15,17 @@ res = requests.get(
     f"{API_BASE_URL}/catalog/datasets/liste-des-gares/exports/json"
 )
 
-data = res.json()
+data_stations = res.json()
+
+##########################
+# Retrieve train network #
+##########################
+
+res = requests.get(
+    f"{API_BASE_URL}/catalog/datasets/lignes-par-type/exports/json"
+)
+
+data_network = res.json()
 
 ##########################
 # Database configuration #
@@ -39,7 +49,7 @@ db = client[DB_NAME]
 
 train_station_collection = db["train_stations"]
 
-for train_station in data:
+for train_station in data_stations:
     train_station_collection.insert_one(
         {
             "code_uic": train_station["code_uic"],
@@ -47,6 +57,19 @@ for train_station in data:
             "code_ligne": train_station["code_ligne"],
             "lat": train_station["geo_point_2d"]["lat"],
             "lon": train_station["geo_point_2d"]["lon"],
+        }
+    )
+
+network_line_collection = db["network"]
+
+for network_line in data_network:
+    network_line_collection.insert_one(
+        {
+            "code_ligne": network_line["code_ligne"],
+            "lib_ligne": network_line["lib_ligne"],
+            "rg_troncon": network_line["rg_troncon"],
+            "type_ligne": network_line["type_ligne"],
+            "geo_shape": network_line["geo_shape"],
         }
     )
 

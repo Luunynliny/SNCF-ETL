@@ -1,5 +1,6 @@
 import dash_daq as daq
 from components import (
+    MAP_BASE_CONFIG,
     network_A,
     network_B,
     network_C,
@@ -7,7 +8,8 @@ from components import (
     train_stations_density_map,
     train_stations_scatter_map,
 )
-from dash import Input, Output, callback, dcc, html
+from dash import Input, Output, callback, dcc, html, no_update
+from icecream import ic
 from network_type import NetworkType
 
 from viz import viz
@@ -54,24 +56,23 @@ viz.layout = html.Div(
 
 @callback(
     Output("train_stations_map", "figure"),
-    [
-        Input("dropdown", "value"),
-        Input("train_stations_map", "relayoutData"),
-    ],
+    Input("dropdown", "value"),
+    Input("train_stations_map", "relayoutData"),
+    prevent_initial_call=True,
 )
-def dropdown(selected, relayout_data):
+def update_map(selected, relayout):
     match selected:
         case "scatter_map":
             fig = train_stations_scatter_map
         case "density_map":
             fig = train_stations_density_map
 
-    if relayout_data:
-        prev_zoom = relayout_data.get("mapbox.zoom", 10)
-        prev_center = relayout_data.get("mapbox.center", {"lat": 0, "lon": 0})
-
-        fig["layout"]["mapbox"]["zoom"] = prev_zoom
-        fig["layout"]["mapbox"]["center"] = prev_center
+    fig["layout"]["mapbox"]["center"] = relayout.get(
+        "mapbox.center", MAP_BASE_CONFIG["center"]
+    )
+    fig["layout"]["mapbox"]["zoom"] = relayout.get(
+        "mapbox.zoom", MAP_BASE_CONFIG["zoom"]
+    )
 
     return fig
 

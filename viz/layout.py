@@ -1,4 +1,4 @@
-import dash_daq as daq
+import dash_bootstrap_components as dbc
 from components import (
     MAP_BASE_CONFIG,
     network_A,
@@ -8,23 +8,35 @@ from components import (
     train_stations_density_map,
     train_stations_scatter_map,
 )
-from dash import Input, Output, callback, dcc, html, no_update
-from icecream import ic
-from network_type import NetworkType
+from dash import Input, Output, callback
+from dash import callback_context as ctx
+from dash import dcc, html, no_update
 
 from viz import viz
 
 viz.layout = html.Div(
     [
-        dcc.Dropdown(
-            id="dropdown",
-            options=[
-                {"label": "Scatter Mapbox", "value": "scatter_map"},
-                {"label": "Density Mapbox", "value": "density_map"},
+        dbc.DropdownMenu(
+            id="layers",
+            label="Layers",
+            children=[
+                dbc.DropdownMenuItem("Gares - Localisation", id="ts-scatter"),
+                dbc.DropdownMenuItem("Gares - Densité", id="ts-density"),
+                dbc.DropdownMenuItem(divider=True),
+                dbc.DropdownMenuItem(
+                    "Réseau - Ligne proprement dite", id="nw-domestic"
+                ),
+                dbc.DropdownMenuItem(
+                    "Réseau - Raccordement", id="nw-connection"
+                ),
+                dbc.DropdownMenuItem(
+                    "Réseau - Voie-mère d'embranchement", id="nw-siding"
+                ),
+                dbc.DropdownMenuItem(
+                    "Réseau - Voie de desserte de voies ferrées de port",
+                    id="nw-service",
+                ),
             ],
-            clearable=False,
-            searchable=False,
-            value="scatter_map",
             style={
                 "position": "absolute",
                 "width": "300px",
@@ -34,18 +46,11 @@ viz.layout = html.Div(
             },
         ),
         dcc.Graph(
-            id="train_stations_map",
+            id="map",
             figure=train_stations_scatter_map,
             style={"width": "100vw", "height": "100vh", "zIndex": 0},
-        )
-        # dcc.RadioItems(
-        #     id="radio_network_map",
-        #     options=[
-        #         {"label": nt.value, "value": nt.name} for nt in NetworkType
-        #     ],
-        #     value=NetworkType.A.name,
-        # ),
-        # dcc.Graph(id="network_map", figure=network_A),
+        ),
+        html.Div(id="output"),
     ]
 )
 
@@ -55,17 +60,31 @@ viz.layout = html.Div(
 
 
 @callback(
-    Output("train_stations_map", "figure"),
-    Input("dropdown", "value"),
-    Input("train_stations_map", "relayoutData"),
-    prevent_initial_call=True,
+    Output("map", "figure"),
+    Input("map", "relayoutData"),
+    Input("ts-scatter", "n_clicks"),
+    Input("ts-density", "n_clicks"),
+    Input("nw-domestic", "n_clicks"),
+    Input("nw-connection", "n_clicks"),
+    Input("nw-siding", "n_clicks"),
+    Input("nw-service", "n_clicks"),
 )
-def update_map(selected, relayout):
-    match selected:
-        case "scatter_map":
+def update_map(relayout, *args):
+    match ctx.triggered_id:
+        case "ts-scatter":
             fig = train_stations_scatter_map
-        case "density_map":
+        case "ts-density":
             fig = train_stations_density_map
+        case "nw-domestic":
+            fig = network_A
+        case "nw-connection":
+            fig = network_B
+        case "nw-siding":
+            fig = network_C
+        case "nw-service":
+            fig = network_D
+        case _:
+            return no_update
 
     fig["layout"]["mapbox"]["center"] = relayout.get(
         "mapbox.center", MAP_BASE_CONFIG["center"]
@@ -75,31 +94,3 @@ def update_map(selected, relayout):
     )
 
     return fig
-
-
-# @callback(
-#     Output("network_map", "figure"),
-#     [
-#         Input("radio_network_map", "value"),
-#         Input("network_map", "relayoutData"),
-#     ],
-# )
-# def switch_network_map(radio_value, relayout_data):
-#     match radio_value:
-#         case NetworkType.A.name:
-#             fig = network_A
-#         case NetworkType.B.name:
-#             fig = network_B
-#         case NetworkType.C.name:
-#             fig = network_C
-#         case NetworkType.D.name:
-#             fig = network_D
-
-#     if relayout_data:
-#         prev_zoom = relayout_data.get("mapbox.zoom", 10)
-#         prev_center = relayout_data.get("mapbox.center", {"lat": 0, "lon": 0})
-
-#         fig["layout"]["mapbox"]["zoom"] = prev_zoom
-#         fig["layout"]["mapbox"]["center"] = prev_center
-
-#     return fig

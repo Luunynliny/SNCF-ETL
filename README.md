@@ -60,7 +60,6 @@ docker compose up
 
 - [x] Train stations
 - [x] Train network
-- [ ] Real-time informations
 
 <p align="right"><a href="#top"><i>back to top</i></a></p>
 
